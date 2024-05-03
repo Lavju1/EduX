@@ -8,9 +8,11 @@ import SkeletonCard from "../../Skeletons/SkeletonCard";
 const SpacesCard = () => {
   const { spaces, getSpacesLoading } = useSelector((state) => state.topic);
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getSpaces());
   }, [dispatch]);
+
   return useMemo(() => {
     return (
       <Nav className="flex-column side-spaces">
@@ -18,25 +20,20 @@ const SpacesCard = () => {
           <MdExplore />
           spaces
         </Nav.Item>
-        {getSpacesLoading && (
-          <>
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </>
-        )}
-        {!getSpacesLoading &&
-          spaces?.length > 0 &&
-          spaces?.map((space, idx) => (
-            <Nav.Link key={idx} className="d-flex align-items-center">
+        {getSpacesLoading ? (
+          Array.from({ length: 4 }).map((_, idx) => <SkeletonCard key={idx} />)
+        ) : (
+          spaces?.map((space) => (
+            <Nav.Link key={space._id} className="d-flex align-items-center">
               <Image className="space-icon" src={space?.avatar} />
               {space?.name}
             </Nav.Link>
-          ))}
+          ))
+        )}
       </Nav>
     );
   }, [spaces, getSpacesLoading]);
 };
+
 
 export default SpacesCard;

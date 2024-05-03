@@ -19,16 +19,8 @@ const AuthPage = (props) => {
       .catch((e) => console.log(JSON.stringify(e.response.data)));
   };
 
-  const getCredentialsFromLocalStorage = () => {
-    const username = localStorage.getItem("username");
-    const password = localStorage.getItem("password");
-    if (username && password) { onLogin(username, password) }
-    // return { username, password };
-  };
-  getCredentialsFromLocalStorage()
+  const onSignup = () => {
 
-  const onSignup = (e) => {
-    e.preventDefault();
     axios
       .post("http://localhost:3001/signup", {
         username,
@@ -40,6 +32,20 @@ const AuthPage = (props) => {
       .then((r) => props.onAuth({ ...r.data, secret })) // NOTE: over-ride secret
       .catch((e) => console.log(JSON.stringify(e.response.data)));
   };
+  const getCredentialsFromLocalStorage = () => {
+    const username = localStorage.getItem("username");
+    const password = localStorage.getItem("password");
+    const registered = localStorage.getItem("registered");
+    if (!registered) {
+      onSignup();
+      localStorage.setItem("registered", true);
+      getCredentialsFromLocalStorage();
+    }
+    if (username && password) { onLogin(username, password) }
+    // return { username, password };
+  };
+  getCredentialsFromLocalStorage()
+
 
   // const { userData, setUserDataLogin } = useContext(UserContext);
   // console.log(userData)

@@ -30,6 +30,13 @@ const TopicSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    spaces: 
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Space",
+        default: '',
+      },
+
     tags: [
       {
         type: mongoose.Types.ObjectId,
