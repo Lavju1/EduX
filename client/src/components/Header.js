@@ -11,7 +11,7 @@ import {
   Image,
 } from "react-bootstrap";
 import { CgSearch } from "react-icons/cg";
-import { BiUser } from "react-icons/bi";
+import { BiQuestionMark, BiUser } from "react-icons/bi";
 import { BsPower } from "react-icons/bs";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
@@ -124,6 +124,17 @@ const Header = () => {
                           <BsPower />
                           Logout
                         </Dropdown.Item>
+                        {user?.email.endsWith('@vitbhopal.ac.in') && 
+                        <Dropdown.Item
+                          onClick={() => {
+                            navigate("/quiz");
+                          }}
+                          
+                          className="d-flex align-items-center"
+                        >
+                          <BiQuestionMark />
+                          Create Quiz 
+                        </Dropdown.Item>}
                       </Dropdown.Menu>
                     </Dropdown>
                   )}

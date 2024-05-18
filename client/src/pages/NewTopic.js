@@ -25,13 +25,16 @@ const NewTopic = () => {
 
   var options = [
     {
-    value: "android", label: "android",
+    value: "Maths", label: "Maths",
     },
     {
-    value: "iOS", label: "iOS",
+    value: "Physics", label: "Physics",
     },
     {
-    value: "android", label: "android",
+    value: "Chemistry", label: "Chemistry",
+    },
+    {
+    value: "Biology", label: "Biology",
     },
   ];
   // {

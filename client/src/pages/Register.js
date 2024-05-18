@@ -44,6 +44,8 @@ const Register = () => {
   // Now you can use userData and setUserData here
   // For example:
   const handleUpdateUserData = (username, email, password, firstName, lastName) => {
+
+
     setUserData({
       username: username,
       email: email,
@@ -53,9 +55,11 @@ const Register = () => {
     });
   };
   const handleSubmit = async (e) => {
-
+// if (email && email.endsWith('@vitbhopal.ac.in')) { 
+//       setLastName(lastName + ' | Mentor'); 
+//     }
     e.preventDefault();
-
+    
     handleUpdateUserData(username, email, password, firstName, lastName)
     if (!username || !email || !password || !firstName || !lastName) return;
 
@@ -107,6 +111,23 @@ const Register = () => {
                 </div>
               )}
               <Form.Group>
+              <Form.Group>
+                <Form.Label htmlFor="email">E-mail Address:</Form.Label>
+                <InputGroup className="mb-3">
+                  <InputGroup.Text id="basic-addon1">
+                    <HiOutlineMail />
+                  </InputGroup.Text>
+                  <Form.Control
+                    type="email"
+                    name="email"
+                    id="email"
+                    disabled={isLoading}
+                    placeholder="someone@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </InputGroup>
+              </Form.Group>
                 <Form.Label htmlFor="firstName">First Name:</Form.Label>
                 <InputGroup className="mb-3">
                   <InputGroup.Text id="basic-addon1">
@@ -154,23 +175,6 @@ const Register = () => {
                     placeholder="Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                  />
-                </InputGroup>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label htmlFor="email">E-mail Address:</Form.Label>
-                <InputGroup className="mb-3">
-                  <InputGroup.Text id="basic-addon1">
-                    <HiOutlineMail />
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    id="email"
-                    disabled={isLoading}
-                    placeholder="someone@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </InputGroup>
               </Form.Group>

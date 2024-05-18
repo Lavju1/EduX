@@ -29,6 +29,8 @@ import "./App.css";
 import "./Responsive.css";
 import { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import QuizGenerator from "./Excel to Quiz/QuizGenerator";
+import Quiz from "./Excel to Quiz/Quiz";
 
 
 const App = () => {
@@ -49,6 +51,14 @@ const App = () => {
           <Route
             path="/login"
             element={isAuth ? <Navigate replace to="/" /> : <Login />}
+          />
+          <Route
+            path="/quiz"
+            element={ <QuizGenerator />}
+          />
+          <Route
+            path="/q"
+            element={ <Quiz />}
           />
           <Route
             path="/verify-email"
