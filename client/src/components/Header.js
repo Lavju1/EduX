@@ -46,7 +46,7 @@ const Header = () => {
   // eslint-disable-next-line
   return useMemo(() => {
     return (
-      <header>
+      <header className="">
         <Navbar expand="lg">
           <Container>
             <Link to="/" onClick={() => dispatch(setSearchQuery(""))}>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-
+import axios from "axios";
 import { UserContext } from "../UserContext";
 import {
   Row,
@@ -54,18 +54,44 @@ const Register = () => {
       lastName: lastName
     });
   };
+  const saveCredentialsToLocalStorage = (username, password, email, firstName, lastName) => {
+    localStorage.setItem("username", username);
+    localStorage.setItem("password", password);
+    localStorage.setItem("email", email);
+    localStorage.setItem("firstName", firstName);
+    localStorage.setItem("lastName", lastName);
+    localStorage.setItem("registered", false);
+  };
+
+
+
+  const onSignup = () => {
+
+    axios
+      .post("http://localhost:3001/signup", {
+        username,
+        password,
+        email,
+        firstName,
+        lastName,
+      })
+    // .then((r) => props.onAuth({ ...r.data, password })) // NOTE: over-ride secret
+    .catch((e) => console.log(JSON.stringify(e.response.data)));
+  };
+
+
+
+
   const handleSubmit = async (e) => {
-// if (email && email.endsWith('@vitbhopal.ac.in')) { 
-//       setLastName(lastName + ' | Mentor'); 
-//     }
     e.preventDefault();
     
     handleUpdateUserData(username, email, password, firstName, lastName)
     if (!username || !email || !password || !firstName || !lastName) return;
 
     try {
-
+      // onSignup();
       dispatch(register({ username, email, password, firstName, lastName }));
+      saveCredentialsToLocalStorage(username, password, email, firstName, lastName)
     } catch (err) {
       console.log(err.message);
     }

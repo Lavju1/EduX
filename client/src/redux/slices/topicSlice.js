@@ -5,7 +5,7 @@ const initialState = {
   topics: [],
   topic: {},
   topContributors: [],
-  spaces: [],
+  spaces:[],
   getSpacesLoading: false,
   searchQuery: "",
   sortOption: "latest",
@@ -69,7 +69,7 @@ export const addTopic = createAsyncThunk(
         selectedTags,
       });
       console.log(selectedSpace, "this is selectd space")
-      console.log(data , "data from topic sclie")
+      console.log(data , "data from topic slice")
       return data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -130,12 +130,13 @@ export const getSpaces = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(`/api/topics/spaces`);
-      return data;
+      return data; // Assuming the API returns spaces under 'spaces' key
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
   }
 );
+
 
 const topicSlice = createSlice({
   name: "topic",
@@ -160,6 +161,10 @@ const topicSlice = createSlice({
     },
   },
   extraReducers: {
+    [getSpaces.fulfilled]: (state, action) => {
+      state.getSpacesLoading = false;
+      state.spaces = action.payload;
+    },
     [getAllTopics.pending]: (state) => {
       state.getAllTopicsIsLoading = true;
     },

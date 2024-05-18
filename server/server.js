@@ -34,9 +34,25 @@ app.use(
 
 app.use("/", authRoutes);
 app.use("/api/topics", topicRoutes);
+
 app.use("/api/comments", commentRoutes);
 app.use("/api/user", userRoutes);
+app.post("/signup", async (req, res) => {
+  const { username, secret, email, first_name, last_name } = req.body;
 
+  // Store a user-copy on Chat Engine!
+  // Docs at rest.chatengine.io
+  try {
+    const r = await axios.post(
+      "https://api.chatengine.io/users/",
+      { username, secret, email, first_name, last_name },
+      { headers: { "Private-Key": CHAT_ENGINE_PRIVATE_KEY } }
+    );
+    return res.status(r.status).json(r.data);
+  } catch (e) {
+    return res.status(e.response.status).json(e.response.data);
+  }
+})
 app.listen(PORT, () => {
   console.log("Server is running!");
 });

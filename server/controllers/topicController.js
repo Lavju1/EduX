@@ -5,38 +5,46 @@ const Space = require("../models/spaceModel");
 
 module.exports = {
   getAllTopics: async (req, res) => {
-    try {
-      const { search, sort } = req.query;
-      let sortOptions = {};
-      let searchQuery = {};
-
-      if (search && search.length > 0) {
-        searchQuery = { title: new RegExp(search, "i") };
+      try {
+        const { search, sort, space } = req.query; // Add 'space' to the destructured query
+  
+        let sortOptions = {};
+        let searchQuery = {};
+  
+        if (search && search.length > 0) {
+          searchQuery = { title: new RegExp(search, "i") };
+        }
+  
+        if (sort === "latest") {
+          sortOptions = { createdAt: -1 };
+        } else if (sort === "popular") {
+          sortOptions = { viewsCount: -1 };
+        } else if (sort === "most_replied") {
+          sortOptions = { totalComments: -1 };
+        } else if (sort === "most_upvoted") {
+          sortOptions = { upvotes: -1 };
+        }
+  
+        // Filter by space if 'space' query param is provided
+        let spaceQuery = {};
+        if (space) {
+          spaceQuery = { spaces: id }; // Assuming 'space' is the ID of the selected space
+        }
+  
+        let topics = await Topic.find({ ...searchQuery, ...spaceQuery }) // Combine search and space queries
+          .sort(sortOptions)
+          .populate("tags")
+          .populate({ path: "author", select: { password: 0, __v: 0 } })
+          .lean()
+          .exec();
+  
+        return res.json(topics);
+      } catch (err) {
+        console.log(err.message);
       }
-
-      if (sort === "latest") {
-        sortOptions = { createdAt: -1 };
-      }
-      if (sort === "popular") {
-        sortOptions = { viewsCount: -1 };
-      }
-      if (sort === "most_replied") {
-        sortOptions = { totalComments: -1 };
-      }
-      if (sort === "most_upvoted") {
-        sortOptions = { upvotes: -1 };
-      }
-      let topics = await Topic.find(searchQuery)
-        .sort(sortOptions)
-        .populate("tags")
-        .populate({ path: "author", select: { password: 0, __v: 0 } })
-        .lean()
-        .exec();
-      return res.json(topics);
-    } catch (err) {
-      console.log(err.message);
-    }
-  },
+    },
+    
+  
   getTopic: async (req, res) => {
     const { slug } = req.params;
     try {
@@ -60,19 +68,25 @@ module.exports = {
     try {
       const { title, content, selectedSpace, selectedTags } = req.body;
 
-      let createdTags = [];
+      // Create an array to store space IDs
+      console.log("this is req.body: ", req.body);
+      let createdSpaces = [];
 
-      for (let index = 0; index < selectedTags.length; index++) {
-        let name = selectedTags[index].value;
-        let tagFound = await Tag.findOne({ name });
-        if (!tagFound) {
-          let tag = await Tag.create({
-            name: name,
+      for (let index = 0; index < selectedSpace.length; index++) {
+        let spaceName = selectedSpace[index]; // Assuming selectedSpace contains space names
+
+        // Check if the space already exists
+        let spaceFound = await Space.findOne({ name: spaceName });
+
+        if (!spaceFound) {
+          // Create the space if it doesn't exist
+          let space = await Space.create({
+            name: spaceName,
             createdBy: req.user.username,
           });
-          createdTags.push(tag._id);
+          createdSpaces.push(space._id); // Push the space ID to the array
         } else {
-          createdTags.push(tagFound._id);
+          createdSpaces.push(spaceFound._id); // Use existing space ID
         }
       }
 
@@ -92,12 +106,16 @@ module.exports = {
         title: title.trim(),
         content: content.trim(),
         slug: slug.trim(),
-        tags: createdTags,
+        spaces: createdSpaces, // Assign the array of space IDs to the topic
+        tags: selectedTags,
       });
+
+      // Populate the author field
       topic = await topic.populate({
         path: "author",
         select: { password: 0, __v: 0 },
       });
+
       return res.status(201).json({
         topic: topic,
         message: "Topic successfully created!",
@@ -223,6 +241,11 @@ module.exports = {
   getSpaces: async (req, res) => {
     try {
       const spaces = await Space.find({});
+      const { space } = req.query;
+      let spaceQuery = {};
+      if (space) {
+        spaceQuery = { spaces: id }; // Assuming 'space' is the ID of the selected space
+      }
       return res.status(200).json(spaces);
     } catch (err) {
       console.log(err.message);

@@ -49,14 +49,16 @@ const NewTopic = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [selectedSpace, setSelectedSpace] = useState("Android");
+  const [selectedSpace, setSelectedSpace] = useState(null);
   const [selectedTags, setSelectedTags] = useState([]);
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || title?.trim()?.length === 0) return;
     if (!content || content?.trim()?.length === 0) return;
-    if (!selectedSpace) return;
+    if (!selectedSpace || !selectedSpace.value) return;
     if (!selectedTags || selectedTags.length === 0) return;
     try {
       console.log(selectedSpace)
@@ -123,9 +125,10 @@ const NewTopic = () => {
                     title="space"
                     options={options}
                     isDisabled={isLoading}
-                    value={options.filter((obj) => obj.value === selectedSpace)}
-                    onChange={(e) => setSelectedSpace(e.value)}
+                    value={selectedSpace} // Update value prop
+                    onChange={(selectedOption) => setSelectedSpace(selectedOption)} // Update onChange
                   />
+
                   <Form.Label className="control-label">Topic Space</Form.Label>
                 </Form.Group>
                 <Form.Group className="form-group select2-container mb-3">
